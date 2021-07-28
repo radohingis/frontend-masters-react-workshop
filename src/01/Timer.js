@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { ProgressCircle } from '../ProgressCircle';
-
-// import { useMachine } from '@xstate/react';
+import { useMachine } from '@xstate/react'
 import { timerMachine } from './timerMachine';
 
 export const Timer = () => {
-  const [state, send] = [{}, () => {}];
+  const [state, send] = useMachine(timerMachine)
 
   const { duration, elapsed, interval } = {
     duration: 60,
@@ -36,45 +34,45 @@ export const Timer = () => {
         <div
           className="elapsed"
           onClick={() => {
-            // ...
+            send({ type: 'toggle' })
           }}
         >
           {Math.ceil(duration - elapsed)}
         </div>
         <div className="controls">
-          {state === 'paused' && (
+          {state !== 'running' &&
             <button
               onClick={() => {
-                // ...
+                send({ type: 'reset' })
               }}
             >
               Reset
             </button>
-          )}
+          }
         </div>
       </div>
       <div className="actions">
-        {state === 'running' && (
+        {state !== 'paused' &&
           <button
             onClick={() => {
-              // ...
+              send({ type: 'toggle' })
             }}
             title="Pause timer"
           >
             <FontAwesomeIcon icon={faPause} />
           </button>
-        )}
+        }
 
-        {(state === 'paused' || state === 'idle') && (
+        {state !== 'running' &&
           <button
             onClick={() => {
-              // ...
+              send({ type: 'toggle' })
             }}
             title="Start timer"
           >
             <FontAwesomeIcon icon={faPlay} />
           </button>
-        )}
+        }
       </div>
     </div>
   );

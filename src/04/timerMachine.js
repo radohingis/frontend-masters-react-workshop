@@ -1,5 +1,7 @@
 import { createMachine, assign } from 'xstate';
 
+const stopCountingOnZero = context => context.elapsed - context.interval <= context.duration
+
 export const timerMachine = createMachine({
   initial: 'idle',
   context: {
@@ -19,14 +21,17 @@ export const timerMachine = createMachine({
     },
     running: {
       on: {
-        // Change this TICK transition into a guarded transition
-        // to go to `expired` when `context.elapsed + context.interval`
-        // is greater than the total `context.duration`.
-        TICK: {
-          actions: assign({
-            elapsed: (ctx) => ctx.elapsed + ctx.interval,
-          }),
-        },
+        TICK: [
+          {
+            cond: 'stopCountingOnZero',
+            actions: assign({
+              elapsed: (ctx) => ctx.elapsed + ctx.interval,
+            }),
+          },
+          {
+            target: 'expired'
+          }
+        ],
         TOGGLE: 'paused',
         ADD_MINUTE: {
           actions: assign({
@@ -41,9 +46,14 @@ export const timerMachine = createMachine({
         RESET: 'idle',
       },
     },
-
-    // Add an `expired` state here.
-    // It should go to the `idle` state on the `RESET` event.
-    // ...
+    expired: {
+      on: {
+        RESET: 'idle'
+      }
+    }
   },
+}, {
+  guards: {
+    stopCountingOnZero: stopCountingOnZero
+  }
 });

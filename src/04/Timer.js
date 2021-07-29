@@ -12,6 +12,7 @@ export const Timer = () => {
   const [state, send] = useMachine(timerMachine);
 
   const { duration, elapsed, interval } = state.context;
+  const totalTimeLefts = Math.ceil(duration - elapsed)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -39,7 +40,7 @@ export const Timer = () => {
       <div className="display">
         <div className="label">{state.value}</div>
         <div className="elapsed" onClick={() => send({ type: 'TOGGLE' })}>
-          {Math.ceil(duration - elapsed)}
+          {totalTimeLefts > 0 ? totalTimeLefts : 0}
         </div>
         <div className="controls">
           {state.value !== 'running' && (

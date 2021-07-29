@@ -1,6 +1,9 @@
 import { createMachine, assign } from 'xstate';
 
 const stopCountingOnZero = context => context.elapsed - context.interval <= context.duration
+const addMinuteToTotalTimerDuration = assign({
+  duration: context => context.duration + 60
+})
 
 export const timerMachine = createMachine({
   initial: 'idle',
@@ -34,9 +37,7 @@ export const timerMachine = createMachine({
         ],
         TOGGLE: 'paused',
         ADD_MINUTE: {
-          actions: assign({
-            duration: (ctx) => ctx.duration + 60,
-          }),
+          actions: 'addMinuteToTotalTimerDuration',
         },
       },
     },
@@ -53,6 +54,9 @@ export const timerMachine = createMachine({
     }
   },
 }, {
+  actions: {
+    addMinuteToTotalTimerDuration: addMinuteToTotalTimerDuration
+  },
   guards: {
     stopCountingOnZero: stopCountingOnZero
   }

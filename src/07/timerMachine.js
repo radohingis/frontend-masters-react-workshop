@@ -1,11 +1,5 @@
 import { createMachine, assign } from 'xstate';
 
-const ticker = (context, event) => (callback) => {
-  // This is the callback service creator.
-  // Add the implementation details here.
-  // ...
-};
-
 const timerExpired = (ctx) => ctx.elapsed >= ctx.duration;
 
 // https://xstate.js.org/viz/?gist=78fef4bd3ae520709ceaee62c0dd59cd
@@ -29,9 +23,17 @@ export const timerMachine = createMachine({
       },
     },
     running: {
-      // Invoke the callback service here.
-      // ...
-
+      invoke: {
+        src: (context) => (callback) => {
+          const interval = setInterval(() => {
+            callback({ type: 'TICK' })
+          }, context.interval * 1000)
+          return () => {
+            console.log('cleanup')
+            return clearInterval(interval)
+          }
+        }
+      },
       initial: 'normal',
       states: {
         normal: {

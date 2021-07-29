@@ -12,6 +12,7 @@ export const Timer = () => {
   const [state, send] = useMachine(timerMachine);
 
   const { duration, elapsed, interval } = state.context;
+  const timeLeft = Math.ceil(duration - elapsed)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -32,6 +33,8 @@ export const Timer = () => {
         '--interval': interval,
       }}
     >
+      <h1>{state.matches({ running: 'normal' })}</h1>
+
       <header>
         <h1>Exercise 06</h1>
       </header>
@@ -39,10 +42,10 @@ export const Timer = () => {
       <div className="display">
         <div className="label">{state.toStrings().slice(-1)}</div>
         <div className="elapsed" onClick={() => send('TOGGLE')}>
-          {Math.ceil(duration - elapsed)}
+          {timeLeft <= 0 ? 'boooom' : timeLeft}
         </div>
         <div className="controls">
-          {!state.matches({ running: 'normal' }) && (
+          {(!state.matches({ running: 'normal' })) && (
             <button onClick={() => send('RESET')}>Reset</button>
           )}
 

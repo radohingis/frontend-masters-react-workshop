@@ -40,7 +40,7 @@ export const Timer = () => {
       <div className="display">
         <div className="label">{state.value}</div>
         <div className="elapsed" onClick={() => send({ type: 'TOGGLE' })}>
-          {totalTimeLefts > 0 ? totalTimeLefts : 0}
+          {totalTimeLefts === 0 ? 'Boo' : totalTimeLefts}
         </div>
         <div className="controls">
           {state.value !== 'running' && (

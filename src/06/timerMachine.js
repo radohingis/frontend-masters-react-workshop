@@ -28,12 +28,12 @@ export const timerMachine = createMachine({
             target: 'overtime',
           },
           on: {
-            RESET: undefined
+            RESET: undefined // do nothing on this event in this state !!
           }
         },
         overtime: {
           on: {
-            TOGGLE: undefined
+            TOGGLE: undefined // do nothing on this event in this state !!
           }
         }
       },
